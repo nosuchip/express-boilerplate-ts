@@ -80,3 +80,12 @@ export class Http409Error extends HttpError {
         super(payload);
     }
 }
+
+export class Http419Error extends HttpError {
+    public readonly statusCode = 419;
+    protected defaultMessage = 'Expired';
+
+    public constructor(payload: Dictionary | string) {
+        super(payload);
+    }
+}

@@ -29,7 +29,7 @@ export interface UserAttributes extends Document {
 
 export interface UserInstance extends UserAttributes {
     checkPassword(password: string): Promise<UserInstance>;
-    generateToken(): string;
+    token(): string;
     hasRole(role: Role): boolean;
 }
 
@@ -193,7 +193,7 @@ UserSchema.methods.checkPassword = async function (password: string): Promise<Us
     return this as UserInstance;
 };
 
-UserSchema.methods.generateToken = function () {
+UserSchema.methods.token = function () {
     const data = { userId: this._id.toString() };
     return jwt.sign(data, Config.appKey, Config.jwtOptions);
 };
