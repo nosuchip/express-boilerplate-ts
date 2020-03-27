@@ -21,7 +21,7 @@ class SendgridMailer {
         }
 
         if (!config.mailerConfig.auth.apiKey) {
-            logger.warn(`Mainer not initialize as Sendgrid api key missing`);
+            logger.warn(`Mailer not initialize as Sendgrid api key missing`);
             return;
         }
 
