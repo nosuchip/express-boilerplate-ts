@@ -1,9 +1,16 @@
 import config from '@server/config';
 import User, { UserInstance } from '@server/db/models/user';
-import { Http400Error, Http403Error, Http404Error, Http409Error, HttpError, Http419Error } from '@server/errors/http-errors';
+import { ErrorEx } from '@server/errors/error-ex';
+import {
+    Http400Error,
+    Http403Error,
+    Http404Error,
+    Http409Error,
+    Http419Error,
+    HttpError,
+} from '@server/errors/http-errors';
 import { joinUrl } from '@server/libs/join-url';
 import mailer from '@server/mailer';
-import { ErrorEx } from "@server/errors/error-ex";
 
 export interface LoginResponse {
     user: UserInstance;
@@ -73,8 +80,15 @@ export const resetPassword = async ({ email }: { email: string }): Promise<void>
     await mailer.send(user.email, 'Password reset', 'password-reset', { resetUrl });
 };
 
-export const setResettedPassword = async ({ token, password, confirmation }: { token: string, password: string, confirmation: string }): Promise<void> => {
-
+export const setResettedPassword = async ({
+    token,
+    password,
+    confirmation,
+}: {
+    token: string;
+    password: string;
+    confirmation: string;
+}): Promise<void> => {
     try {
         const user = await User.setNewPassword(token, password, confirmation);
 
@@ -104,7 +118,7 @@ export const verifyResetToken = async ({ token }: { token: string }): Promise<vo
 
         throw new Http400Error('Invalid token');
     }
-}
+};
 
 /*
 

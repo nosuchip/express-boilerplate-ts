@@ -11,7 +11,7 @@ import * as handlebarsLayouts from 'handlebars-layouts';
 import config from '../config';
 
 class SendgridMailer {
-    private _ready: boolean = false;
+    private _ready = false;
 
     public readonly templteExt = '.html';
 

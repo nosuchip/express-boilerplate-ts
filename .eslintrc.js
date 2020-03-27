@@ -11,6 +11,6 @@ module.exports = {
     },
     rules: {
       "@typescript-eslint/explicit-function-return-type": "off",
-      "curly": "all"
+      "curly": "error"
     }
 };

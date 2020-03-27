@@ -63,7 +63,9 @@ UserSchema.statics.validateToken = (token: string): Dictionary => {
     try {
         decoded = jwt.verify(token, Config.appKey) as Dictionary;
     } catch (error) {
-        if (error.name === 'TokenExpiredError') return { valid: true, expired: true };
+        if (error.name === 'TokenExpiredError') {
+            return { valid: true, expired: true };
+        }
 
         return { valid: false };
     }
