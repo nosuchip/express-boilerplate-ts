@@ -1,13 +1,11 @@
 import config from '@server/config';
 import User, { UserInstance } from '@server/db/models/user';
-import { ErrorEx } from '@server/errors/error-ex';
 import {
     Http400Error,
     Http403Error,
     Http404Error,
     Http409Error,
-    Http419Error,
-    HttpError,
+    Http419Error
 } from '@server/errors/http-errors';
 import { joinUrl } from '@server/libs/join-url';
 import mailer from '@server/mailer';
@@ -47,7 +45,7 @@ export const register = async ({
     confirmation: string;
 }): Promise<UserInstance> => {
     if (password !== confirmation) {
-        throw new Http400Error('PAssword must match confirmation');
+        throw new Http400Error('Password must match confirmation');
     }
 
     let user = await User.findOne({ email: email });

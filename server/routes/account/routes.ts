@@ -6,7 +6,7 @@ import { login, register, resetPassword, setResettedPassword, verifyResetToken }
 export default [
     {
         path: '/login',
-        method: 'get',
+        method: 'post',
         handlers: {
             v1: [
                 async (req: Request, res: Response) => {

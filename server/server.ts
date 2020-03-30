@@ -16,10 +16,10 @@ import express from 'express';
 
 import { historyMiddleware } from './middlewares/history';
 
-const run = async () => {
-    await db.initialize();
+export const app = express();
 
-    const app = express();
+export const runApp = async () => {
+    await db.initialize();
 
     app.disable('x-powered-by');
     app.enable('trust proxy');
@@ -49,5 +49,3 @@ const run = async () => {
 
     return app;
 };
-
-run();
