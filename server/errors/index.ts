@@ -6,7 +6,7 @@ import { Express } from 'express';
 import { HttpError } from './http-errors';
 
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {
-    logger.error(err);
+    logger.exception(err);
 
     if (err instanceof HttpError) {
         res.status(err.statusCode).json(err.json());

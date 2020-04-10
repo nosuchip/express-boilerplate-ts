@@ -46,7 +46,7 @@ class SendgridMailer {
             const data = await promisify(fs.readFile)(templatePath);
             return data.toString();
         } catch (error) {
-            logger.error(error);
+            logger.exception(error);
             return '';
         }
     }
