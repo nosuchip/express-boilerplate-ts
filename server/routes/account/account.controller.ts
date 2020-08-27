@@ -1,12 +1,6 @@
 import config from '@server/config';
 import User, { UserInstance } from '@server/db/models/user';
-import {
-    Http400Error,
-    Http403Error,
-    Http404Error,
-    Http409Error,
-    Http419Error
-} from '@server/errors/http-errors';
+import { Http400Error, Http403Error, Http404Error, Http409Error, Http419Error } from '@server/errors/http-errors';
 import { joinUrl } from '@server/libs/join-url';
 import mailer from '@server/mailer';
 

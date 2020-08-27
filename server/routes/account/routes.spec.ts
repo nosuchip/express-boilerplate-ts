@@ -1,8 +1,9 @@
-import { expect } from "chai";
-import { agent, SuperTest, Test } from "supertest";
-import { runApp } from "../../server";
+import { expect } from 'chai';
+import { SuperTest, Test, agent } from 'supertest';
 
-describe("Account router", () => {
+import { runApp } from '../../server';
+
+describe('Account router', () => {
     let app: SuperTest<Test>;
 
     before(async () => {
@@ -29,19 +30,19 @@ describe("Account router", () => {
         throw new Error('Not implemented');
     });
 
-    it("should able to register user", async () => {
+    it('should able to register user', async () => {
         throw new Error('Not implemented');
     });
 
-    it("should able verify registered user by token from email", async () => {
+    it('should able verify registered user by token from email', async () => {
         throw new Error('Not implemented');
     });
 
-    it("should able to reset password", async () => {
+    it('should able to reset password', async () => {
         throw new Error('Not implemented');
     });
 
-    it("should able to set new password by token from email", async () => {
+    it('should able to set new password by token from email', async () => {
         throw new Error('Not implemented');
     });
 });
