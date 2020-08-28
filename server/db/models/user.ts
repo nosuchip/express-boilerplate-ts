@@ -1,16 +1,7 @@
-import crypto from 'crypto';
-import { promisify } from 'util';
-
-import Config from '@server/config';
 import { ErrorEx } from '@server/errors/error-ex';
-import { Dictionary } from '@server/typing/generics';
-import jwt from 'jsonwebtoken';
+import { hashPassword } from '@server/libs/password';
+import { generateToken, validateToken } from '@server/libs/token';
 import mongoose, { Document, Model, Schema } from 'mongoose';
-
-const PasswordLength = 128;
-const SaltLen = 16;
-const Iterations = 10000;
-const Digest = 'sha512';
 
 export enum Role {
     Admin = 'admin',
@@ -28,14 +19,11 @@ export interface UserAttributes extends Document {
 }
 
 export interface UserInstance extends UserAttributes {
-    checkPassword(password: string): Promise<UserInstance>;
     token(): string;
     hasRole(role: Role): boolean;
 }
 
 export interface UserModel extends Model<UserInstance> {
-    validateToken(token: string): Dictionary;
-    hashPassword(password: string, salt?: string): Promise<string>;
     createNew(attrs: Partial<UserAttributes>): Promise<UserInstance>;
     verifyUser(token: string): Promise<UserInstance>;
     setNewPassword(token: string, password: string, confirmation: string): Promise<UserInstance>;
@@ -57,45 +45,12 @@ const UserSchema = new Schema(
 
 const User: UserModel = mongoose.model<UserAttributes, UserModel>('User', UserSchema, 'users');
 
-UserSchema.statics.validateToken = (token: string): Dictionary => {
-    let decoded: Dictionary | null = null;
-
-    try {
-        decoded = jwt.verify(token, Config.appKey) as Dictionary;
-    } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            return { valid: true, expired: true };
-        }
-
-        return { valid: false };
-    }
-
-    const expirationDate = new Date(decoded.exp * 1000);
-
-    if (new Date() > expirationDate) {
-        return { valid: true, expired: true };
-    }
-
-    return {
-        valid: true,
-        data: decoded,
-        expired: false,
-    };
-};
-
-UserSchema.statics.hashPassword = async (password: string, salt?: string): Promise<string> => {
-    salt = salt || crypto.randomBytes(SaltLen).toString('hex').slice(0, SaltLen);
-    const hash = await promisify(crypto.pbkdf2)(password, salt, Iterations, PasswordLength, Digest);
-
-    return [salt, Iterations.toString(), hash.toString('hex')].join('.');
-};
-
 UserSchema.statics.createNew = async function (attrs: Partial<UserAttributes>): Promise<UserInstance> {
     if (!attrs.email || !attrs.password) {
         throw new Error('Email or password not provided');
     }
 
-    const password = await User.hashPassword(attrs.password);
+    const password = await hashPassword(attrs.password);
 
     const user = new User({
         ...attrs,
@@ -106,7 +61,7 @@ UserSchema.statics.createNew = async function (attrs: Partial<UserAttributes>): 
 };
 
 UserSchema.statics.verifyUser = async function (token: string): Promise<UserInstance> {
-    const validated = User.validateToken(token);
+    const validated = validateToken(token);
 
     if (!validated.valid || !validated.data) {
         throw new ErrorEx('Token invalid');
@@ -139,7 +94,7 @@ UserSchema.statics.setNewPassword = async function (
         throw new ErrorEx('Password and confirmation does not match');
     }
 
-    const validated = User.validateToken(token);
+    const validated = validateToken(token);
 
     if (!validated.valid) {
         throw new ErrorEx('Token invalid');
@@ -159,7 +114,7 @@ UserSchema.statics.setNewPassword = async function (
         user.confirmedAt = new Date();
     }
 
-    user.password = await User.hashPassword(password);
+    user.password = await hashPassword(password);
 
     return user.save();
 };
@@ -175,33 +130,12 @@ UserSchema.statics.assignRoles = async function (userId: string, roles: Role[]):
     return user.save();
 };
 
-UserSchema.methods.checkPassword = async function (password: string): Promise<UserInstance> {
-    try {
-        const [salt, iterations, hash] = this.password.split('.');
-
-        if (!iterations || !hash) {
-            throw new Error();
-        }
-
-        const hashed = await User.hashPassword(password, salt);
-
-        if (hashed !== this.password) {
-            throw new Error();
-        }
-    } catch (error) {
-        throw new ErrorEx('Password mismatch');
-    }
-
-    return this as UserInstance;
+UserSchema.methods.hasRole = function (role: Role) {
+    return this.roles.indexOf(role) !== -1;
 };
 
 UserSchema.methods.token = function () {
-    const data = { userId: this._id.toString() };
-    return jwt.sign(data, Config.appKey, Config.jwtOptions);
-};
-
-UserSchema.methods.hasRole = function (role: Role) {
-    return this.roles.indexOf(role) !== -1;
+    return generateToken({ userId: this._id.toString() });
 };
 
 export default User;

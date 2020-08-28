@@ -6,6 +6,7 @@ export interface ErrorData extends Dictionary {
 }
 
 export class ErrorEx extends Error implements Dictionary {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 
     constructor(data: string | ErrorData) {

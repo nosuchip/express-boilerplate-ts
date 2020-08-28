@@ -18,6 +18,7 @@ export default [
         method: 'get',
         handlers: {
             v1: [
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 async (req: Request, res: Response): Promise<void> => {
                     throw new Error('Something unexpected happens!');
                 },

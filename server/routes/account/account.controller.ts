@@ -2,6 +2,7 @@ import config from '@server/config';
 import User, { UserInstance } from '@server/db/models/user';
 import { Http400Error, Http403Error, Http404Error, Http409Error, Http419Error } from '@server/errors/http-errors';
 import { joinUrl } from '@server/libs/join-url';
+import { checkPassword } from '@server/libs/password';
 import mailer from '@server/mailer';
 
 export interface LoginResponse {
@@ -22,7 +23,7 @@ export const login = async ({ username, password }: { username: string; password
         throw new Http403Error('User not confirmed or inactive');
     }
 
-    await user.checkPassword(password);
+    await checkPassword(user.password, password);
 
     const token = user.token();
 
@@ -111,22 +112,3 @@ export const verifyResetToken = async ({ token }: { token: string }): Promise<vo
         throw new Http400Error('Invalid token');
     }
 };
-
-/*
-
-
-
-router.post('/verify/', validate(VerifySchema), async (req, res) => {
-  const token = req.body.token;
-
-  try {
-    const user = await User.verifyUser(token);
-    res.json({ userId: user._id.toString(), success: true });
-  } catch (error) {
-    if (error.expired) return res.boom.resourceGone('Expired', { success: false, expired: true, message: 'Token expired' });
-    if (error.alreadyConfirmed) return res.boom.conflict('confirmed', { success: false, alreadyConfirmed: true, message: 'User already confirmed' });
-    return res.boom.badData('Invalid', { success: false, message: 'Invalid token.' });
-  }
-});
-
-*/
