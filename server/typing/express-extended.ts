@@ -1,6 +1,6 @@
 import { IncomingHttpHeaders } from 'http';
 
-import { Dictionary } from '../generics';
+import { Dictionary } from './generics';
 
 export interface Req {
     body: Dictionary;
@@ -13,5 +13,5 @@ export interface TokenReq extends Req {
 }
 
 export interface UserReq extends TokenReq {
-    user: null | import('../../db/models/user').UserInstance;
+    user: null | import('../db/models/user').UserInstance;
 }
