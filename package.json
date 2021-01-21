@@ -78,7 +78,7 @@
         "mongoose": "^5.10.1",
         "prettier": "^2.1.1",
         "prettier-plugin-import-sort": "0.0.4",
-        "socket.io": "^2.3.0",
+        "socket.io": "^2.4.0",
         "supertest": "^4.0.2",
         "ts-jest": "^26.3.0",
         "ts-node-dev": "^1.0.0-pre.61",
