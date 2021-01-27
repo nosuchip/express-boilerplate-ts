@@ -30,7 +30,7 @@ export interface UserModel extends Model<UserInstance> {
     assignRoles(userId: string, roles: Role[]): Promise<UserInstance>;
 }
 
-const UserSchema = new Schema(
+const UserSchema = new Schema<UserInstance, UserModel>(
     {
         email: { type: String, required: true },
         password: { type: String, required: true },
@@ -43,7 +43,7 @@ const UserSchema = new Schema(
     },
 );
 
-const User: UserModel = mongoose.model<UserAttributes, UserModel>('User', UserSchema, 'users');
+const User: UserModel = mongoose.model<UserInstance, UserModel>('User', UserSchema, 'users');
 
 UserSchema.statics.createNew = async function (attrs: Partial<UserAttributes>): Promise<UserInstance> {
     if (!attrs.email || !attrs.password) {
