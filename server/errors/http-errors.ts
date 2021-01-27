@@ -13,12 +13,14 @@ export abstract class HttpError extends Error {
     protected defaultMessage!: string;
 
     protected constructor(payload: string | ErrorPayload) {
+        super();
+
         if (typeof payload === 'string') {
-            super(payload);
+            this.message = payload;
         } else {
             this.payload = { success: false, ...payload };
             this.statusCode = payload.statusCode || this.statusCode;
-            super(payload.message || this.defaultMessage);
+            this.message = payload.message || this.defaultMessage;
         }
 
         this.name = this.constructor.name;

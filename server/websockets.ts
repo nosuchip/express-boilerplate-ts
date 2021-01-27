@@ -2,6 +2,7 @@ import http from 'http';
 
 import logger from '@server/logger';
 import { Dictionary } from '@server/typing/generics';
+import { Server as SockerIoServer, Socket as SocketIoSocket } from 'socket.io';
 import { v4 as uuid4 } from 'uuid';
 
 export interface Subscriber<T> {
@@ -9,21 +10,15 @@ export interface Subscriber<T> {
 }
 
 class SocketWrapper {
-    io!: SocketIO.Server;
-    socket: SocketIO.Socket | null = null;
+    io!: SockerIoServer;
+    socket: SocketIoSocket | null = null;
     subscribers: Dictionary<Dictionary<any>> = {};
 
-    private async loadModule() {
-        const sio = await import('socket.io');
-        return sio.default;
-    }
-
     public async initialize(server: http.Server) {
-        const socketIO = await this.loadModule();
-        this.io = socketIO(server);
+        this.io = new SockerIoServer(server);
 
-        return new Promise((resolve, reject) => {
-            this.io.on('connection', (socket: SocketIO.Socket) => {
+        return new Promise((resolve) => {
+            this.io.on('connection', (socket: SocketIoSocket) => {
                 logger.info('Websockets started');
                 this.socket = socket;
                 resolve(socket);
