@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-require('dotenv-safe').config();
+require('dotenv-flow').config();
 
 import { runApp } from './server';
 
