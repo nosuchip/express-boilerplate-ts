@@ -16,7 +16,7 @@ export abstract class HttpError extends Error {
         if (typeof payload === 'string') {
             super(payload);
         } else {
-            this.payload = { success: false, ...payload, };
+            this.payload = { success: false, ...payload };
             this.statusCode = payload.statusCode || this.statusCode;
             super(payload.message || this.defaultMessage);
         }

@@ -8,7 +8,7 @@
     "license": "ISC",
     "scripts": {
         "postbuild": "ef-tspm",
-        "server:dev": "ts-node-dev -r tsconfig-paths/register --poll server/index.ts",
+        "server:dev": "nodemon",
         "server:build": "tsc",
         "server:start": "node dist/index.js",
         "server:lint": "tsc --noEmit && eslint 'server/**/*.{js,ts,tsx}' --quiet --fix --ignore-pattern 'dist/'",
@@ -61,7 +61,7 @@
         "compression": "^1.7.4",
         "connect-history-api-fallback": "^1.6.0",
         "cors": "^2.8.5",
-        "dotenv": "^8.2.0",
+        "dotenv-safe": "^8.2.0",
         "eslint": "^6.8.0",
         "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-prettier": "^3.1.4",
@@ -76,16 +76,17 @@
         "jsonwebtoken": "^8.5.1",
         "lint-staged": "^10.2.13",
         "mongoose": "^5.10.1",
+        "nodemo": "^1.0.0",
+        "nodemon": "^2.0.7",
         "prettier": "^2.1.1",
         "prettier-plugin-import-sort": "0.0.4",
         "socket.io": "^2.3.0",
         "supertest": "^4.0.2",
         "ts-jest": "^26.3.0",
-        "ts-node-dev": "^1.0.0-pre.61",
+        "ts-node": "^9.1.1",
         "tsconfig-paths": "^3.9.0",
         "typescript": "^3.9.7",
         "uuid": "^7.0.3",
-        "winston": "^3.3.3",
-        "winston-mongodb": "^5.0.3"
+        "winston": "^3.3.3"
     }
 }

@@ -1,3 +1,5 @@
-import { runApp } from "./server";
+require('dotenv-safe').config();
+
+import { runApp } from './server';
 
 runApp();

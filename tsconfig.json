@@ -86,5 +86,14 @@
 
   "exclude": [
     "server/**/*.spec.ts"
-  ]
+  ],
+
+  "ts-node": {
+    "files": true
+  },
+
+  "files": [
+    "./server/typing/express/index.d.ts",
+    "./server/typing/handlebars-layout.d.ts",
+  ],
 }

@@ -1,6 +1,5 @@
 import config from '@server/config';
 import winston, { format } from 'winston';
-import winstonMongodbTransport from 'winston-mongodb';
 import * as Transport from 'winston-transport';
 
 const alignedWithColorsAndTime = format.combine(
@@ -22,29 +21,6 @@ const transports: Transport[] = [
         format: alignedWithColorsAndTime,
     }),
 ];
-
-if (config.isProduction) {
-    require('winston-mongodb');
-
-    transports.push(
-        new winstonMongodbTransport.MongoDB({
-            level: 'warn',
-            db: config.databaseUri,
-            collection: 'logs',
-            storeHost: true,
-            decolorize: true,
-            expireAfterSeconds: 2 * 7 * 24 * 60 * 60,
-        }),
-    );
-} else {
-    transports.push(
-        new winston.transports.File({
-            filename: 'development.log',
-            level: 'debug',
-            format: alignedWithColorsAndTime,
-        }),
-    );
-}
 
 export interface BetterLogger extends winston.Logger {
     exception: (error: Error, prefix?: string) => BetterLogger;
