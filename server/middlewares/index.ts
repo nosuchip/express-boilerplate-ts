@@ -4,7 +4,7 @@ import logger from '@server/logger';
 import { ApiHandlerVersioned, ExpressHandler, HttpMethod, Route } from '@server/typing/middlewares';
 import bodyParserMiddleware from 'body-parser';
 import corsMiddleware from 'cors';
-import { Express, Router } from 'express';
+import { Express, Request, Router } from 'express';
 import bearerTokenMiddleware from 'express-bearer-token';
 import rateLimitMiddleware from 'express-rate-limit';
 
@@ -20,7 +20,7 @@ export const applyMiddlewares = (app: Express) => {
     app.use(bodyParserMiddleware.urlencoded({ extended: false, limit: '4mb' }));
     app.use(bearerTokenMiddleware(config.bearerOptions));
     app.use(corsMiddleware(config.cors));
-    app.options('*', corsMiddleware(config.cors));
+    app.options('*', corsMiddleware<Request>(config.cors));
 
     app.use(userTokenMiddleware);
 
