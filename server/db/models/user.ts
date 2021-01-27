@@ -1,4 +1,4 @@
-import { ErrorEx } from '@server/errors/error-ex';
+import { Http400Error, Http403Error, Http404Error, Http409Error } from '@server/errors/http-errors';
 import { hashPassword } from '@server/libs/password';
 import { generateToken, validateToken } from '@server/libs/token';
 import mongoose, { Document, Model, Schema } from 'mongoose';
@@ -64,21 +64,21 @@ UserSchema.statics.verifyUser = async function (token: string): Promise<UserInst
     const validated = validateToken(token);
 
     if (!validated.valid || !validated.data) {
-        throw new ErrorEx('Token invalid');
+        throw new Http403Error('Token invalid');
     }
 
     if (validated.expired) {
-        throw new ErrorEx({ message: 'Confirmation url expired', expired: true });
+        throw new Http403Error({ message: 'Confirmation url expired', expired: true });
     }
 
     const user = await this.findById(validated.data.userId);
 
     if (!user) {
-        throw new ErrorEx('User not found');
+        throw new Http404Error('User not found');
     }
 
     if (user.confirmedAt) {
-        throw new ErrorEx({ message: 'User already confirmed', alreadyConfirmed: true });
+        throw new Http409Error({ message: 'User already confirmed', alreadyConfirmed: true });
     }
 
     user.confirmedAt = new Date();
@@ -91,23 +91,23 @@ UserSchema.statics.setNewPassword = async function (
     confirmation: string,
 ): Promise<UserInstance> {
     if (password !== confirmation) {
-        throw new ErrorEx('Password and confirmation does not match');
+        throw new Http400Error('Password and confirmation does not match');
     }
 
     const validated = validateToken(token);
 
     if (!validated.valid) {
-        throw new ErrorEx('Token invalid');
+        throw new Http403Error('Token invalid');
     }
 
     if (validated.expired) {
-        throw new ErrorEx({ message: 'Confirmation url expired', expired: true });
+        throw new Http403Error({ message: 'Confirmation url expired', expired: true });
     }
 
     const user = await User.findById(validated.data.userId);
 
     if (!user) {
-        throw new ErrorEx('User not found');
+        throw new Http404Error('User not found');
     }
 
     if (!user.confirmedAt) {
@@ -123,7 +123,7 @@ UserSchema.statics.assignRoles = async function (userId: string, roles: Role[]):
     const user = await User.findById(userId);
 
     if (!user) {
-        throw new ErrorEx('User not found');
+        throw new Http404Error('User not found');
     }
 
     user.roles = [...new Set([...user.roles, ...roles])];
